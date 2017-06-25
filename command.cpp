@@ -1,6 +1,10 @@
 #include "command.h"
 
-Command::Command(const QString &name_, const QString &args_, const QString &working_dir_) :
+Command::Command() : name(""), args(""), working_dir("") {
+
+}
+
+Command::Command(const QString &name_, const QStringList &args_, const QString &working_dir_) :
     name(name_), args(args_), working_dir(working_dir_)
 {
 
@@ -12,7 +16,7 @@ const QString& Command::Name() const {
 }
 
 
-const QString& Command::Arguments() const {
+const QStringList &Command::Arguments() const {
     return args;
 }
 
