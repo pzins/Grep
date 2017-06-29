@@ -6,39 +6,40 @@ Interpretor::Interpretor() {
 
 }
 
-QString Interpretor::Execute(const QString &command_, const QStringList &arguments_, const QString &working_directory_) {
+//TODO check size extreme cases, wrong entry
+void assembleAndRemoveBrackets(QStringList& args) {
+    int idx = 0;
+    while(idx < args.size() && args.at(idx)[0] == '-') ++idx;
+
+    QString tmp = "";
+    int sizeList = args.size();
+    for(int i = sizeList-1; i >= idx; --i) {
+        tmp = " " + args.at(i) + tmp;
+        args.removeLast();
+    }
+
+    tmp.replace(QRegExp("\""), "");
+    tmp.replace(QRegExp("\'"), "");
+    tmp.remove(0,1);
+    args.push_back(tmp);
+}
+
+//TODO change command = Command(...) pas brsoin de member je pense
+QString Interpretor::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) {
     command = Command(command_, arguments_, working_directory_);
     QProcess *myProcess = new QProcess();
     myProcess->setWorkingDirectory(command.WorkingDir());
 
-
-    /*
-    QString a("-iRn");
-    QString b("\"class Device\"");
-    QStringList l;
-    l.push_back(a);
-    l.push_back(b);
-    for(auto i : l)
-        std::cout << i.toStdString();
-    std::cout << std::endl;
-
-    for(auto i : command.Arguments())
-        std::cout << i.toStdString();
-    std::cout << std::endl;
-    std::cout << l.size() << std::endl;
-    std::cout << command.Arguments().size() << std::endl;
-    std::cout << (l == command.Arguments()) << std::endl;
-*/
-
-
-    myProcess->start(command.Name(), command.Arguments());
-//    myProcess->start(command.Name(), l);//command.Arguments());
+    assembleAndRemoveBrackets(arguments_);
+    std::cout << arguments_[1].toStdString() << std::endl;
+    myProcess->start(command.Name(), arguments_);
+//    myProcess->start("grep", l);//command.Arguments());
 
 
     myProcess->waitForFinished(); // sets current thread to sleep and waits for pingProcess end
     QString output(myProcess->readAllStandardOutput());
-    std::cout << "..." << std::endl;
-    std::cout << output.toStdString() << std::endl;
+    QString tmp = arguments_.back();
+    output = output.replace(tmp, "<b><font color=red> " + tmp + "</font></b>", Qt::CaseInsensitive);
+    output = output.replace(QRegExp("\n"), "<br/>");
     return output;
-
 }
