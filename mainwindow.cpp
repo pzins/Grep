@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <iostream>
+#include <QShortcut>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -22,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEdit_2, SIGNAL(returnPressed()),ui->pushButton,SIGNAL(clicked()));
     connect(ui->lineEdit_3, SIGNAL(returnPressed()),ui->pushButton_2,SIGNAL(clicked()));
     connect(ui->checkBox, SIGNAL(toggled(bool)), this, SLOT(handleCheckbox()));
+    QShortcut* s_search = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->lineEdit_2, SLOT(setFocus()));
+    QShortcut* s_case_search = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), ui->checkBox, SLOT(toggle()));
+    QShortcut* s_grep = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_K), ui->lineEdit_3, SLOT(setFocus()));
+    QShortcut* s_case_gerp = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_J), ui->checkBox_2, SLOT(toggle()));
+
 }
 
 MainWindow::~MainWindow()
