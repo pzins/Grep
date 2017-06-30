@@ -8,8 +8,6 @@ class Interpretor
 public:
     Interpretor();
     QString Execute(const QString& command_, QStringList &arguments_, const QString& working_directory_);
-private:
-    Command command;
 };
 
 #endif // INTERPRETOR_H

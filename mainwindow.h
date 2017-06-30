@@ -24,15 +24,11 @@ public:
 private:
     Ui::MainWindow *ui;
     Interpretor interpretor;
-    QLineEdit* command_line_edit;
-    QPlainTextEdit* results;
-    QLabel* label;
-    QCheckBox* checkbox;
 
 private slots:
-    void handleButton();
-    void handleButton2();
-    void handleCheckbox();
+    void HandleMainButton();
+    void HandleSecondButton();
+    void HandleCheckbox();
 };
 
 #endif // MAINWINDOW_H

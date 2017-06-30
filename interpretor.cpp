@@ -26,15 +26,11 @@ void assembleAndRemoveBrackets(QStringList& args) {
 
 //TODO change command = Command(...) pas brsoin de member je pense
 QString Interpretor::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) {
-    command = Command(command_, arguments_, working_directory_);
     QProcess *myProcess = new QProcess();
-    myProcess->setWorkingDirectory(command.WorkingDir());
+    myProcess->setWorkingDirectory(working_directory_);
 
     assembleAndRemoveBrackets(arguments_);
-    std::cout << arguments_[1].toStdString() << std::endl;
-    myProcess->start(command.Name(), arguments_);
-//    myProcess->start("grep", l);//command.Arguments());
-
+    myProcess->start(command_, arguments_);
 
     myProcess->waitForFinished(); // sets current thread to sleep and waits for pingProcess end
     QString output(myProcess->readAllStandardOutput());
