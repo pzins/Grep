@@ -66,26 +66,33 @@ void MainWindow::HandleMainButton() {
         res = interpretor.Execute(cmd, args, "/home/pierre/dev/DORSAL/tensorflow_compil/tensorflow");
     }
     ui->results_plain_text->document()->setHtml(res);
-
 }
-//TODO function qui convert to HTML \n <=> <br/> + add color to matches
+
+
+// highlight word in line with color and bold and add end of line
+void HighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs) {
+    line.replace(word, "<b><font color=" + color + "> " + word + "</font></b>", cs);
+    line + "<br/>";
+}
+
 void MainWindow::HandleSecondButton() {
     QString tmp = ui->results_plain_text->toPlainText();
-    std::cout << tmp.toStdString() << std::endl;
+    // split line by line into a list
     QStringList strs = tmp.split("\n");
 
-    QString res = "";
-    Qt::CaseSensitivity ci = Qt::CaseInsensitive;
+    // set Case sensitivity
+    Qt::CaseSensitivity cs = Qt::CaseInsensitive;
     if(ui->result_case_checkbox->isChecked())
-        ci = Qt::CaseSensitive;
+        cs = Qt::CaseSensitive;
+
+    QString res = "";
     for(int i = 0; i < strs.size(); ++i) {
-        if(strs[i].contains(ui->result_line_edit->text(), ci))
+        if(strs[i].contains(ui->result_line_edit->text(), cs))
         {
-            strs[i].replace(ui->result_line_edit->text(), "<b><font color=blue> " + ui->result_line_edit->text() + "</font></b>", ci);
-            res += strs[i] + "<br/>";
+            HighlightToHTML(strs[i], ui->result_line_edit->text(), "blue", cs);
+            res += strs[i] ;
         }
     }
-    ui->results_plain_text->document()->clear();
     ui->results_plain_text->document()->setHtml(res);
 }
 

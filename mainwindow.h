@@ -12,7 +12,6 @@ namespace Ui {
 class MainWindow;
 }
 
-//TODO remove members not needed
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
