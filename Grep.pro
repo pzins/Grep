@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     interpretor.cpp \
-    command.cpp
+    command.cpp \
+    wrongargumentsexception.cpp
 
 HEADERS  += mainwindow.h \
     interpretor.h \
-    command.h
+    command.h \
+    wrongargumentsexception.h
 
 FORMS    += mainwindow.ui

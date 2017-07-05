@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <wrongargumentsexception.h>
 #include <QLineEdit>
 #include <QPushButton>
 #include <iostream>
@@ -11,9 +12,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     //widgets configuration
+    ui->command_push_button->setText("Run");
+    ui->result_search_push_button->setText("Search");
     ui->grep_case_check_box->setText("case sensitive");
     ui->result_case_checkbox->setText("case sensitive");
     ui->grep_label->setText("grep -iRn");
+    ui->working_directory->setText("/home/pierre/dev/DORSAL/tensorflow_compil/tensorflow"); // TODO get by working dir when run grep
 
     //connections
     //buttons and checkbox
@@ -26,11 +30,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->grep_arg_line_edit, SIGNAL(returnPressed()), ui->command_push_button, SIGNAL(clicked()));
     connect(ui->result_line_edit, SIGNAL(returnPressed()), ui->result_search_push_button, SIGNAL(clicked()));
 
+    //TODO to see if it is possible to accelerate process because now too slow + need threshold because 1 letter for grep => problems
+    connect(ui->grep_arg_line_edit, SIGNAL(textChanged(QString)), ui->command_push_button, SIGNAL(clicked()));
+
     //keyboard shortcuts
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->grep_arg_line_edit, SLOT(setFocus()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), ui->grep_case_check_box, SLOT(toggle()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_K), ui->result_line_edit, SLOT(setFocus()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_J), ui->result_case_checkbox, SLOT(toggle()));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), ui->working_directory, SLOT(setFocus()));
 
 }
 
@@ -42,28 +50,33 @@ MainWindow::~MainWindow()
 //TODO test signal ontextchange to do dynamic research
 void MainWindow::HandleMainButton() {
     ui->results_plain_text->document()->clear();
-    QString res;
+    QString res="";
+
+    // if command line is used
     if(ui->command_line_edit->text().size() > 0) {
-
         QStringList str = ui->command_line_edit->text().split(" ");
-
-        QString cmd = "";
-        if(!str.isEmpty()){
-            cmd = str.front();
+        if(!str.isEmpty()) {
+            QString cmd = str.front();
+            str.pop_front();
+            res = interpretor.Execute(cmd, str, ui->working_directory->text());
         }
-        str.pop_front();
-        res = interpretor.Execute(cmd, str, "/home/pierre/dev/DORSAL/tensorflow_compil/tensorflow");
-    } else {
-        QString cmd = "grep";
-        QString arg;
-        if(ui->grep_case_check_box->isChecked()) arg = "-Rn";
-        else arg = "-iRn";
-        QStringList args;
-        args.push_back(arg);
-        args.push_back(ui->grep_arg_line_edit->text());
-        std::cout << cmd.toStdString() << std::endl;
-        std::cout << args.at(0).toStdString() << std::endl;
-        res = interpretor.Execute(cmd, args, "/home/pierre/dev/DORSAL/tensorflow_compil/tensorflow");
+    }
+    // grep command line is used
+    else {
+        if(ui->grep_arg_line_edit->text().size() > 0) {
+            QString cmd = "grep";
+            QString arg;
+            if(ui->grep_case_check_box->isChecked()) arg = "-Rn";
+            else arg = "-iRn";
+            QStringList args;
+            args.push_back(arg);
+            args.push_back(ui->grep_arg_line_edit->text());
+            try {
+                res = interpretor.Execute(cmd, args, ui->working_directory->text());
+            } catch(WrongArgumentsException e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
     }
     ui->results_plain_text->document()->setHtml(res);
 }
