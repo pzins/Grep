@@ -7,7 +7,7 @@ class Interpretor
 {
 public:
     Interpretor();
-    QString Execute(const QString& command_, QStringList &arguments_, const QString& working_directory_);
+    QString Execute(Command* cmd, const QString& command_, QStringList &arguments_, const QString& working_directory_);
 };
 
 #endif // INTERPRETOR_H

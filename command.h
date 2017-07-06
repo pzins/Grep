@@ -6,16 +6,21 @@
 class Command
 {
 public:
-    Command();
-    Command(const QString& name_, const QStringList& args_, const QString& working_dir_);
-    const QString& Name() const;
-    const QString& WorkingDir() const;
-    const QStringList& Arguments() const;
+    virtual QString Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const = 0;
+    QString DoExecute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const ;
+};
 
-private:
-    QString name;
-    QStringList args;
-    QString working_dir;
+class OtherCommand : public Command
+{
+public:
+    virtual QString Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const;
+};
+
+class GrepCommand : public Command
+{
+public:
+    virtual QString Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const;
+    void PrepareArguments(QStringList& args) const;
 };
 
 #endif // COMMAND_H
