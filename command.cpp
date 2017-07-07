@@ -8,6 +8,23 @@ void convertNewLineToHTML(QString& output)
     output = output.replace(QRegExp("\n"), "<br/>");
 }
 
+QString Command::DoExecute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
+    QProcess *myProcess = new QProcess();
+    myProcess->setWorkingDirectory(working_directory_);
+
+    myProcess->start(command_, arguments_);
+    myProcess->waitForFinished();
+    QString output(myProcess->readAllStandardOutput());
+    return output;
+
+}
+
+QString OtherCommand::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
+    QString output = DoExecute(command_, arguments_, working_directory_);
+    convertNewLineToHTML(output);
+    return output;
+}
+
 // Command argument should be -XXX -YYY -ZZZ ... "pattern"
 // quotes are no required but all options with "-" should be in first positions
 void GrepCommand::PrepareArguments(QStringList& args) const {
@@ -34,25 +51,6 @@ void GrepCommand::PrepareArguments(QStringList& args) const {
         args.push_back(tmp);
     }
 }
-
-
-QString Command::DoExecute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
-    QProcess *myProcess = new QProcess();
-    myProcess->setWorkingDirectory(working_directory_);
-
-    myProcess->start(command_, arguments_);
-    myProcess->waitForFinished();
-    QString output(myProcess->readAllStandardOutput());
-    return output;
-
-}
-
-QString OtherCommand::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
-    QString output = DoExecute(command_, arguments_, working_directory_);
-    convertNewLineToHTML(output);
-    return output;
-}
-
 
 QString GrepCommand::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
     // prepare argument list

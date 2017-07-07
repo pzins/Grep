@@ -81,7 +81,9 @@ void MainWindow::HandleMainButton() {
         }
     }
     try {
-        res = interpretor.Execute(cmd, command, arguments, ui->working_directory->text());
+        Runner* r = new Runner(cmd, command, arguments, ui->working_directory->text(), ui->results_plain_text);
+        r->start();
+//        res = interpretor.Execute(cmd, command, arguments, ui->working_directory->text());
     } catch(WrongArgumentsException e) {
         std::cout << e.what() << std::endl;
     }

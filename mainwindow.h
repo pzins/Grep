@@ -7,6 +7,7 @@
 #include <QPlainTextEdit>
 #include <QLabel>
 #include <QCheckBox>
+#include <QThread>
 
 namespace Ui {
 class MainWindow;
@@ -28,6 +29,22 @@ private slots:
     void HandleMainButton();
     void HandleSecondButton();
     void HandleCheckbox();
+};
+
+class Runner : public QThread
+{
+public:
+    Runner(Command* cmd_, QString& command_, QStringList& args_, QString working_dir_, QPlainTextEdit* res_) : cmd(cmd_), command(command_), args(args_), working_dir(working_dir_), res(res_) {}
+private:
+    Interpretor interpretor;
+    QString command;
+    QStringList args;
+    QString working_dir;
+    Command* cmd;
+    QPlainTextEdit* res;
+    void run() {
+        res->document()->setHtml(interpretor.Execute(cmd, command, args, working_dir));
+    }
 };
 
 #endif // MAINWINDOW_H
