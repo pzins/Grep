@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <memory>
 #include <wrongargumentsexception.h>
 #include <QLineEdit>
 #include <QPushButton>
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->result_line_edit, SIGNAL(returnPressed()), ui->result_search_push_button, SIGNAL(clicked()));
 
     //TODO to see if it is possible to accelerate process because now too slow + need threshold because 1 letter for grep => problems
-//    connect(ui->grep_arg_line_edit, SIGNAL(textChanged(QString)), ui->command_push_button, SIGNAL(clicked()));
+    connect(ui->grep_arg_line_edit, SIGNAL(textChanged(QString)), ui->command_push_button, SIGNAL(clicked()));
 
     //keyboard shortcuts
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), ui->grep_arg_line_edit, SLOT(setFocus()));
@@ -44,6 +45,13 @@ MainWindow::MainWindow(QWidget *parent) :
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_J), ui->result_case_checkbox, SLOT(toggle()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), ui->working_directory, SLOT(setFocus()));
 
+    worker_thread = new QThread();
+    worker = new Worker();
+    worker->moveToThread(worker_thread);
+    connect(worker_thread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(this, &MainWindow::operate, worker, &Worker::doWork);
+    connect(worker, &Worker::resultReady, this, &MainWindow::HandleResult);
+    worker_thread->start();
 }
 
 MainWindow::~MainWindow()
@@ -52,8 +60,10 @@ MainWindow::~MainWindow()
 }
 
 //TODO test signal ontextchange to do dynamic research
+//TODO refactor and simplify
 void MainWindow::HandleMainButton() {
-    ui->results_plain_text->document()->clear();
+//    ui->results_plain_text->document()->clear();
+    std::cout << "call " << std::endl;
     QString res="";
 
     Command* cmd = nullptr;
@@ -81,8 +91,18 @@ void MainWindow::HandleMainButton() {
         }
     }
     try {
-        Runner* r = new Runner(cmd, command, arguments, ui->working_directory->text(), ui->results_plain_text);
-        r->start();
+//        Runner* r(new Runner(cmd, command, arguments, ui->working_directory->text()));
+
+//        connect(r, &Runner::resultReady, this, &MainWindow::HandleComandResult);
+//        r->start();
+
+        // work well if we set a min ize limit otherwise too many matches
+        if(!worker->isRunning() && ui->grep_arg_line_edit->text().size() > 5) {
+            worker->PrepareWorker(cmd, command, arguments, ui->working_directory->text());
+            operate("ol");
+        }
+
+
 //        res = interpretor.Execute(cmd, command, arguments, ui->working_directory->text());
     } catch(WrongArgumentsException e) {
         std::cout << e.what() << std::endl;
@@ -90,6 +110,14 @@ void MainWindow::HandleMainButton() {
     ui->results_plain_text->document()->setHtml(res);
 }
 
+void MainWindow::HandleResult(const QString &str) {
+    ui->results_plain_text->document()->clear();
+    ui->results_plain_text->document()->setHtml(str);
+}
+
+void MainWindow::HandleComandResult(const QString& str) {
+    ui->results_plain_text->document()->setHtml(str);
+}
 
 // highlight word in line with color and bold and add end of line
 void HighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs) {
