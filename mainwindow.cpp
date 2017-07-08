@@ -41,7 +41,7 @@ MainWindow::MainWindow(Params params_, QWidget *parent) :
     connect(ui->grep_arg_line_edit, SIGNAL(returnPressed()), ui->command_push_button, SIGNAL(clicked()));
     connect(ui->result_line_edit, SIGNAL(returnPressed()), ui->result_search_push_button, SIGNAL(clicked()));
 
-    //TODO to see if it is possible to accelerate process because now too slow + need threshold because 1 letter for grep => problems
+    // dynamic grep search
     connect(ui->grep_arg_line_edit, SIGNAL(textChanged(QString)), ui->command_push_button, SIGNAL(clicked()));
 
     //keyboard shortcuts
@@ -68,8 +68,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//TODO test signal ontextchange to do dynamic research
-//TODO refactor and simplify
 void MainWindow::HandleMainButton() {
 
     Command* cmd = nullptr;
