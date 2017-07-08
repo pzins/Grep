@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     interpretor.cpp \
     command.cpp \
     wrongargumentsexception.cpp \
-    worker.cpp
+    worker.cpp \
+    tests.cpp
 
 HEADERS  += mainwindow.h \
     interpretor.h \

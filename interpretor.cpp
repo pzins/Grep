@@ -1,4 +1,6 @@
 #include "interpretor.h"
+#include <gtest/gtest.h>
+
 
 
 Interpretor::Interpretor(const QString &color_) : color(color_){
