@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>872</width>
-    <height>611</height>
+    <width>1037</width>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,48 +19,11 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>811</width>
-      <height>541</height>
+      <width>981</width>
+      <height>631</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0">
-     <item row="1" column="0">
-      <widget class="QLineEdit" name="command_line_edit"/>
-     </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="command_push_button">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-       <property name="autoDefault">
-        <bool>true</bool>
-       </property>
-       <property name="default">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="2">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLineEdit" name="result_line_edit"/>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="result_case_checkbox">
-         <property name="text">
-          <string>CheckBox</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="result_search_push_button">
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="3" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -85,8 +48,45 @@
      <item row="0" column="0">
       <widget class="QLineEdit" name="working_directory"/>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="5" column="0" colspan="2">
       <widget class="QPlainTextEdit" name="results_plain_text"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="command_push_button">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="command_line_edit"/>
+     </item>
+     <item row="4" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QCheckBox" name="result_case_checkbox">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="result_line_edit"/>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="result_search_push_button">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -96,7 +96,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>872</width>
+     <width>1037</width>
      <height>19</height>
     </rect>
    </property>

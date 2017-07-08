@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(Params params_, QWidget *parent = 0);
+    void SearchHighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs);
     ~MainWindow();
 
 private:

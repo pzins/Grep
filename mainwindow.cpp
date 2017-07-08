@@ -26,6 +26,10 @@ MainWindow::MainWindow(Params params_, QWidget *parent) :
     ui->working_directory->setText(dir.absolutePath());
     ui->working_directory->setText("/home/pierre/dev/DORSAL/tensorflow_compil/tensorflow"); // to debug
 
+    // hide pushbuttons
+    ui->command_push_button->hide();
+    ui->result_search_push_button->hide();
+
     //connections
     //buttons and checkbox
     connect(ui->command_push_button, SIGNAL (clicked()), this, SLOT (HandleMainButton()));
@@ -94,7 +98,7 @@ void MainWindow::HandleMainButton() {
         }
     }
     // work well if we set a min ize limit otherwise too many matches
-    if(cmd && ui->grep_arg_line_edit->text().size() > 5) {
+    if(cmd && (ui->command_line_edit->text().size() > 0 || ui->grep_arg_line_edit->text().size() > params.min_nb_letter_dynamic_grep)) {
         worker->PrepareWorker(cmd, command, arguments, ui->working_directory->text());
         operate("");
     }
@@ -108,9 +112,9 @@ void MainWindow::HandleWorkerResult(const QString &str) {
 
 
 // highlight word in line with color and bold and add end of line
-void HighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs) {
+void MainWindow::SearchHighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs) {
     line.replace(word, "<b><font color=" + color + "> " + word + "</font></b>", cs);
-    line + "<br/>";
+    line += "<br/>";
 }
 
 void MainWindow::HandleSecondButton() {
@@ -127,7 +131,7 @@ void MainWindow::HandleSecondButton() {
     for(int i = 0; i < strs.size(); ++i) {
         if(strs[i].contains(ui->result_line_edit->text(), cs))
         {
-            HighlightToHTML(strs[i], ui->result_line_edit->text(), params.highlight_color, cs);
+            SearchHighlightToHTML(strs[i], ui->result_line_edit->text(), params.highlight_color, cs);
             res += strs[i] ;
         }
     }
