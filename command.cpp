@@ -3,10 +3,7 @@
 #include <QProcess>
 #include <wrongargumentsexception.h>
 
-void convertNewLineToHTML(QString& output)
-{
-    output = output.replace(QRegExp("\n"), "<br/>");
-}
+
 
 QString Command::DoExecute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
     QProcess *myProcess = new QProcess();
@@ -21,7 +18,6 @@ QString Command::DoExecute(const QString &command_, QStringList &arguments_, con
 
 QString OtherCommand::Execute(const QString &command_, QStringList &arguments_, const QString &working_directory_) const {
     QString output = DoExecute(command_, arguments_, working_directory_);
-    convertNewLineToHTML(output);
     return output;
 }
 
@@ -61,7 +57,5 @@ QString GrepCommand::Execute(const QString &command_, QStringList &arguments_, c
 
     // highlight the pattern and convert \n to html <br/>
     QString tmp = arguments_.back();
-    output = output.replace(tmp, "<b><font color=red> " + tmp + "</font></b>", Qt::CaseInsensitive); //case sensitivity has no effect here
-    convertNewLineToHTML(output);
     return output;
 }

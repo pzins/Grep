@@ -33,11 +33,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     interpretor.cpp \
     command.cpp \
-    wrongargumentsexception.cpp
+    wrongargumentsexception.cpp \
+    worker.cpp
 
 HEADERS  += mainwindow.h \
     interpretor.h \
     command.h \
-    wrongargumentsexception.h
+    wrongargumentsexception.h \
+    worker.h \
+    params.h
 
 FORMS    += mainwindow.ui

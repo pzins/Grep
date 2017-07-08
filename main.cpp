@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     testing::InitGoogleTest(&argc, argv);
-
-    MainWindow w;
+    Params p;
+    MainWindow w(p);
     w.show();
     RUN_ALL_TESTS();
     return a.exec();

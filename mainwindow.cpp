@@ -8,12 +8,14 @@
 #include <QDir>
 #include <iostream>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(Params params_, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     QDir dir;
     ui->setupUi(this);
+
+    params = params_;
     //widgets configuration
     ui->command_push_button->setText("Run");
     ui->result_search_push_button->setText("Search");
@@ -45,12 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_J), ui->result_case_checkbox, SLOT(toggle()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), ui->working_directory, SLOT(setFocus()));
 
+    // configuration of the thread and worker
     worker_thread = new QThread();
-    worker = new Worker();
+    worker = new Worker(params);
     worker->moveToThread(worker_thread);
+    // connections
     connect(worker_thread, &QThread::finished, worker, &QObject::deleteLater);
     connect(this, &MainWindow::operate, worker, &Worker::doWork);
-    connect(worker, &Worker::resultReady, this, &MainWindow::HandleResult);
+    connect(worker, &Worker::resultReady, this, &MainWindow::HandleWorkerResult);
+    // start the worker thread
     worker_thread->start();
 }
 
@@ -62,16 +67,14 @@ MainWindow::~MainWindow()
 //TODO test signal ontextchange to do dynamic research
 //TODO refactor and simplify
 void MainWindow::HandleMainButton() {
-//    ui->results_plain_text->document()->clear();
-    std::cout << "call " << std::endl;
-    QString res="";
 
     Command* cmd = nullptr;
     QString command;
     QStringList arguments;
+
     // if command line is used
     if(ui->command_line_edit->text().size() > 0) {
-        arguments= ui->command_line_edit->text().split(" ");
+        arguments = ui->command_line_edit->text().split(" ");
         if(!arguments.isEmpty()) {
             command = arguments.front();
             arguments.pop_front();
@@ -90,34 +93,19 @@ void MainWindow::HandleMainButton() {
             cmd = new GrepCommand();
         }
     }
-    try {
-//        Runner* r(new Runner(cmd, command, arguments, ui->working_directory->text()));
-
-//        connect(r, &Runner::resultReady, this, &MainWindow::HandleComandResult);
-//        r->start();
-
-        // work well if we set a min ize limit otherwise too many matches
-        if(!worker->isRunning() && ui->grep_arg_line_edit->text().size() > 5) {
-            worker->PrepareWorker(cmd, command, arguments, ui->working_directory->text());
-            operate("ol");
-        }
-
-
-//        res = interpretor.Execute(cmd, command, arguments, ui->working_directory->text());
-    } catch(WrongArgumentsException e) {
-        std::cout << e.what() << std::endl;
+    // work well if we set a min ize limit otherwise too many matches
+    if(cmd && ui->grep_arg_line_edit->text().size() > 5) {
+        worker->PrepareWorker(cmd, command, arguments, ui->working_directory->text());
+        operate("");
     }
-    ui->results_plain_text->document()->setHtml(res);
 }
 
-void MainWindow::HandleResult(const QString &str) {
+
+void MainWindow::HandleWorkerResult(const QString &str) {
     ui->results_plain_text->document()->clear();
     ui->results_plain_text->document()->setHtml(str);
 }
 
-void MainWindow::HandleComandResult(const QString& str) {
-    ui->results_plain_text->document()->setHtml(str);
-}
 
 // highlight word in line with color and bold and add end of line
 void HighlightToHTML(QString& line, const QString& word, const QString& color, Qt::CaseSensitivity cs) {
@@ -139,7 +127,7 @@ void MainWindow::HandleSecondButton() {
     for(int i = 0; i < strs.size(); ++i) {
         if(strs[i].contains(ui->result_line_edit->text(), cs))
         {
-            HighlightToHTML(strs[i], ui->result_line_edit->text(), "blue", cs);
+            HighlightToHTML(strs[i], ui->result_line_edit->text(), params.highlight_color, cs);
             res += strs[i] ;
         }
     }
