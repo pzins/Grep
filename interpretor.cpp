@@ -13,7 +13,7 @@ void Interpretor::ConvertNewLineToHTML(QString& output)
 }
 
 void Interpretor::HighlightWord(QString& output, const QString& word) {
-    output = output.replace(word, "<b><font color=" + color + "> " + word+ "</font></b>", Qt::CaseInsensitive);
+    output = output.replace(word, "<b><font color=" + color + "> " + word + " </font></b>", Qt::CaseInsensitive);
 }
 
 

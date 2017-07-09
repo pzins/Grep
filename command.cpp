@@ -54,8 +54,5 @@ QString GrepCommand::Execute(const QString &command_, QStringList &arguments_, c
 
     // execute
     QString output = DoExecute(command_, arguments_, working_directory_);
-
-    // highlight the pattern and convert \n to html <br/>
-    QString tmp = arguments_.back();
     return output;
 }

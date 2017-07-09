@@ -13,6 +13,9 @@ public:
         working_directory = working_directory_;
     }
 
+    void Initialize(QString color) {
+        interpretor = new Interpretor(color);
+    }
     Command* cmd;
     QString command_name;
     Interpretor* interpretor;
@@ -42,3 +45,17 @@ TEST_F(InterpretorTest, uname) {
     ASSERT_TRUE((res.compare("Linux<br/>") == 0));
 }
 
+TEST_F(InterpretorTest, highlightWord) {
+    Initialize("blue");
+    QString test_str = "lacazette ol tolisso";
+    interpretor->HighlightWord(test_str, "ol");
+    ASSERT_TRUE((test_str.compare("lacazette <b><font color=blue> ol </font></b> t<b><font color=blue> ol </font></b>isso") == 0));
+}
+
+
+TEST_F(InterpretorTest, convertNewLineToHTML) {
+    Initialize("blue");
+    QString test_str = "lacazette \nol \ntolisso";
+    interpretor->ConvertNewLineToHTML(test_str);
+    ASSERT_TRUE((test_str.compare("lacazette <br/>ol <br/>tolisso") == 0));
+}
