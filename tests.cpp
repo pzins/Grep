@@ -49,7 +49,7 @@ TEST_F(InterpretorTest, highlightWord) {
     Initialize("blue");
     QString test_str = "lacazette ol tolisso";
     interpretor->HighlightWord(test_str, "ol");
-    ASSERT_TRUE((test_str.compare("lacazette <b><font color=blue> ol </font></b> t<b><font color=blue> ol </font></b>isso") == 0));
+    ASSERT_TRUE((test_str.compare("lacazette <b><font color=blue>ol</font></b> t<b><font color=blue>ol</font></b>isso") == 0));
 }
 
 
